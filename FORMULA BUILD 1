@@ -1,30 +1,128 @@
-#NAME THE formula def get_name(): return input("What is the name of your formula? ") 
+# NAME THE FORMULA
+def get_name():
+    return input("What is the name of your formula? ")
 
-#WRITE THE FORMULA 
-def get_formula(): 
-  return input("Enter your formula: ") 
+# WRITE THE FORMULA
+def get_formula():
+    return input("Enter your formula: ")
 
-name = get_name() 
-formula = get_formula() 
+# FIND VARIABLES
+def find_variables(formula):
+    variables = []
 
-#FIND THE VARIABLES variables = [] for letter in formula: 
-if letter.isalpha(): 
-  if letter not in variables: 
-    variables.append(letter) 
+    for letter in formula:
+        if letter.isalpha():
+            if letter not in variables:
+                variables.append(letter)
 
-#REPLACE VARIABLES WITH VALUES 
-values={} 
-for variable in variables: 
-  number=int(input(f"{variable}= ")) 
-  values[variable]=number print(values) 
+    return variables
 
-#REPLACE VARIABLES WITH VALUES IN FORMULA 
-for variable in values: 
-  formula = formula.replace(variable, str(values[variable])) 
+# ENTER VALUES
+def get_values(variables):
+    values = {}
 
-#SOLVE THE FORMULA 
-answer=eval(formula) 
-print(name) 
-print(formula) 
-print(variables) 
-print(answer)
+    for variable in variables:
+        number = int(input(f"{variable} = "))
+        values[variable] = number
+
+    return values
+
+# SOLVE FORMULA
+def solve_formula(formula, values):
+
+    solved_formula = formula
+
+    for variable in values:
+        solved_formula = solved_formula.replace(variable, str(values[variable]))
+
+    answer = eval(solved_formula)
+
+    print("\nRESULTS")
+    print("Formula Name:", name)
+    print("Formula:", solved_formula)
+    print("Variables:", values)
+    print("Answer:", answer)
+
+    return answer
+
+#SAVE FORMULA
+def save_formula(name, formula, variables):
+    filename = name + ".txt"
+
+    with open(filename, "w") as file:
+        file.write(f"NAME={name}\n")
+        file.write(f"FORMULA={formula}\n")
+        file.write(f"VARIABLES={','.join(variables)}")
+
+    print("File saved.")
+
+def open_formula():
+    filename = input("Enter formula name: ") + ".txt"
+
+    with open(filename, "r") as file:
+        name = file.readline().strip().replace("NAME=", "")
+        formula = file.readline().strip().replace("FORMULA=", "")
+        variables = file.readline().strip().replace("VARIABLES=", "").split(",")
+
+    print("Formula loaded successfully!")
+
+    return name, formula, variables
+    
+# MAIN PROGRAM
+name = get_name()
+formula = get_formula()
+
+variables = find_variables(formula)
+
+values = get_values(variables)
+
+solve_formula(formula, values)
+
+# CONTINUATION MENU
+def cont_menu():
+    global formula, variables, values
+
+    print("\nWhat would you like to do next?")
+    print("1. Enter New Values")
+    print("2. Enter New Formula")
+    print("3. Open Saved Formula")
+    print("4. Save Formula")
+    print("5. Exit")
+
+    choice = input("Enter Option: ")
+
+    if choice == "1":
+        values = get_values(variables)
+        solve_formula(formula, values)
+        cont_menu()
+
+    elif choice == "2":
+        formula = get_formula()
+        variables = find_variables(formula)
+        values = get_values(variables)
+        solve_formula(formula, values)
+        cont_menu()
+
+    elif choice == "3":
+        open_formula(name, formula, variables)
+        get_values()
+
+    elif choice == "4":
+        print("Saving formula...")
+        save_formula(name, formula, variables)
+        cont_menu()
+
+    elif choice == "5":
+        print("Goodbye!")
+
+    else:
+        print("SELECTION ERROR")
+
+# CONTINUATION OPTIONS
+choice = input("\nWOULD YOU LIKE TO CONTINUE? (Y/N): ")
+
+if choice.upper() == "Y":
+    print("Continuing...")
+    cont_menu()
+else:
+    print("Goodbye!")
