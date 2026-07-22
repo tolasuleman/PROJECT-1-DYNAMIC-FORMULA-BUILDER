@@ -1,39 +1,72 @@
-# NAME THE FORMULA
+import time
+
+# ----------------------------
+# GLOBAL VARIABLES
+# ----------------------------
+name = ""
+formula = ""
+variables = []
+values = {}
+
+# ----------------------------
+# WELCOME
+# ----------------------------
+def welcome():
+    print("WELCOME TO THE DYNAMIC FORMULA BUILDER")
+
+
+# ----------------------------
+# GET FORMULA NAME
+# ----------------------------
 def get_name():
     return input("What is the name of your formula? ")
 
-# WRITE THE FORMULA
+
+# ----------------------------
+# GET FORMULA
+# ----------------------------
 def get_formula():
     return input("Enter your formula: ")
 
+
+# ----------------------------
 # FIND VARIABLES
+# ----------------------------
 def find_variables(formula):
     variables = []
 
     for letter in formula:
-        if letter.isalpha():
-            if letter not in variables:
-                variables.append(letter)
+        if letter.isalpha() and letter not in variables:
+            variables.append(letter)
 
     return variables
 
-# ENTER VALUES
+
+# ----------------------------
+# GET VALUES
+# ----------------------------
 def get_values(variables):
+
     values = {}
 
     for variable in variables:
-        number = int(input(f"{variable} = "))
-        values[variable] = number
+        values[variable] = float(input(f"{variable} = "))
 
     return values
 
+
+# ----------------------------
 # SOLVE FORMULA
-def solve_formula(formula, values):
+# ----------------------------
+def solve_formula(name, formula, values):
 
     solved_formula = formula
 
     for variable in values:
-        solved_formula = solved_formula.replace(variable, str(values[variable]))
+        solved_formula = solved_formula.replace(
+            variable,
+            str(values[variable])
+        )
 
     answer = eval(solved_formula)
 
@@ -45,84 +78,153 @@ def solve_formula(formula, values):
 
     return answer
 
-#SAVE FORMULA
+
+# ----------------------------
+# SAVE FORMULA
+# ----------------------------
 def save_formula(name, formula, variables):
+
     filename = name + ".txt"
 
     with open(filename, "w") as file:
+
         file.write(f"NAME={name}\n")
         file.write(f"FORMULA={formula}\n")
         file.write(f"VARIABLES={','.join(variables)}")
 
-    print("File saved.")
+    print("Formula saved successfully.")
 
+
+# ----------------------------
+# OPEN FORMULA
+# ----------------------------
 def open_formula():
+
     filename = input("Enter formula name: ") + ".txt"
 
     with open(filename, "r") as file:
+
         name = file.readline().strip().replace("NAME=", "")
         formula = file.readline().strip().replace("FORMULA=", "")
-        variables = file.readline().strip().replace("VARIABLES=", "").split(",")
+        variables = (
+            file.readline()
+            .strip()
+            .replace("VARIABLES=", "")
+            .split(",")
+        )
 
-    print("Formula loaded successfully!")
+    print(f"\nLoaded Formula: {formula}")
 
     return name, formula, variables
-    
-# MAIN PROGRAM
-name = get_name()
-formula = get_formula()
 
-variables = find_variables(formula)
 
-values = get_values(variables)
-
-solve_formula(formula, values)
-
+# ----------------------------
 # CONTINUATION MENU
+# ----------------------------
 def cont_menu():
-    global formula, variables, values
 
-    print("\nWhat would you like to do next?")
-    print("1. Enter New Values")
-    print("2. Enter New Formula")
-    print("3. Open Saved Formula")
-    print("4. Save Formula")
-    print("5. Exit")
+    global name, formula, variables, values
 
-    choice = input("Enter Option: ")
+    while True:
 
-    if choice == "1":
-        values = get_values(variables)
-        solve_formula(formula, values)
-        cont_menu()
+        print("\nWhat would you like to do next?")
+        print("1. Enter New Values")
+        print("2. Enter New Formula")
+        print("3. Open Saved Formula")
+        print("4. Save Formula")
+        print("5. Exit")
 
-    elif choice == "2":
-        formula = get_formula()
-        variables = find_variables(formula)
-        values = get_values(variables)
-        solve_formula(formula, values)
-        cont_menu()
+        choice = input("\nEnter Option: ")
 
-    elif choice == "3":
-        open_formula(name, formula, variables)
-        get_values()
+        if choice == "1":
 
-    elif choice == "4":
-        print("Saving formula...")
-        save_formula(name, formula, variables)
-        cont_menu()
+            values = get_values(variables)
+            solve_formula(name, formula, values)
 
-    elif choice == "5":
-        print("Goodbye!")
+        elif choice == "2":
 
-    else:
-        print("SELECTION ERROR")
+            name = get_name()
+            formula = get_formula()
+            variables = find_variables(formula)
+            values = get_values(variables)
 
-# CONTINUATION OPTIONS
-choice = input("\nWOULD YOU LIKE TO CONTINUE? (Y/N): ")
+            solve_formula(name, formula, values)
 
-if choice.upper() == "Y":
-    print("Continuing...")
-    cont_menu()
-else:
-    print("Goodbye!")
+        elif choice == "3":
+
+            name, formula, variables = open_formula()
+            values = get_values(variables)
+
+            solve_formula(name, formula, values)
+
+        elif choice == "4":
+
+            save_formula(name, formula, variables)
+
+        elif choice == "5":
+
+            print("Goodbye!")
+            break
+
+        else:
+
+            print("SELECTION ERROR")
+
+
+# ----------------------------
+# START MENU
+# ----------------------------
+def start_menu():
+
+    global name, formula, variables, values
+
+    while True:
+
+        print("\nMAKE A SELECTION TO BEGIN\n")
+        print("1. Enter New Formula")
+        print("2. Open Saved Formula")
+        print("3. Exit")
+
+        choice = input("\nEnter Option: ")
+
+        if choice == "1":
+
+            name = get_name()
+            formula = get_formula()
+
+            variables = find_variables(formula)
+
+            values = get_values(variables)
+
+            solve_formula(name, formula, values)
+
+            cont_menu()
+
+        elif choice == "2":
+
+            name, formula, variables = open_formula()
+
+            values = get_values(variables)
+
+            solve_formula(name, formula, values)
+
+            cont_menu()
+
+        elif choice == "3":
+
+            print("Goodbye!")
+            break
+
+        else:
+
+            print("SELECTION ERROR")
+
+
+# ----------------------------
+# MAIN
+# ----------------------------
+welcome()
+
+time.sleep(1.5)
+
+start_menu()
