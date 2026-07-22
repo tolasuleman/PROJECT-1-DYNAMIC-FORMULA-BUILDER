@@ -1,0 +1,30 @@
+#NAME THE formula def get_name(): return input("What is the name of your formula? ") 
+
+#WRITE THE FORMULA 
+def get_formula(): 
+  return input("Enter your formula: ") 
+
+name = get_name() 
+formula = get_formula() 
+
+#FIND THE VARIABLES variables = [] for letter in formula: 
+if letter.isalpha(): 
+  if letter not in variables: 
+    variables.append(letter) 
+
+#REPLACE VARIABLES WITH VALUES 
+values={} 
+for variable in variables: 
+  number=int(input(f"{variable}= ")) 
+  values[variable]=number print(values) 
+
+#REPLACE VARIABLES WITH VALUES IN FORMULA 
+for variable in values: 
+  formula = formula.replace(variable, str(values[variable])) 
+
+#SOLVE THE FORMULA 
+answer=eval(formula) 
+print(name) 
+print(formula) 
+print(variables) 
+print(answer)
